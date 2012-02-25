@@ -1,7 +1,10 @@
 Ruby::Application.routes.draw do
 
   match 'search' => 'search#index'
-  #, via: :post
+
+  match 'images/:id' => 'images#index'
+
+  #, via: :postl
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
