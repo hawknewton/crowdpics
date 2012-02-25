@@ -2,6 +2,7 @@
     <head>
       <title></title>
 	 <style type="text/css">
+
 	 .fb_button .fb_button_text, .fb_button_rtl .fb_button_text {
 	background: #5F78AB url(https://s-static.ak.facebook.com/rsrc.php/v1/yL/r/FGFbc80dUKj.png);
 	border-top: solid 1px #879AC0;
@@ -15,6 +16,8 @@
 	text-shadow: none;
 	}
 	 </style>
+	 
+
     </head>
     <body>
       <div id="fb-root"></div>
@@ -34,7 +37,7 @@
 				var authResponse = response.authResponse;
 				if (authResponse) {
 					$.post('/search', 
-						{  auth_token: authResponse.accessToken }, 
+						{  auth_token: authResponse.accessToken, facebook_uuid: authResponse.userID }, 
 						function(result){
 							console.log(result)
 						}
@@ -47,5 +50,7 @@
 
 <div class="fb-login-button" data-scope="email"><a class="fb_button fb_button_medium"><span class="fb_button_text">Login with Facebook</span></a></div>
 	  	 
+
+	
     </body>
  </html>
