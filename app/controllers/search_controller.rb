@@ -46,7 +46,6 @@ class SearchController < ApplicationController
 
   @private
   def images_from_seed_data()
-
     seed_images_dir = File.join(ApplicationHelper::Images.base_images_dir, 'seeds')
 
     Dir.chdir(seed_images_dir)

@@ -5,14 +5,14 @@ module ApplicationHelper
     require 'rest_client'
 
     Face_api_train_url = 'http://api.face.com/faces/train.json'
-    Api_key = '307161879343818'
-    Api_secret = '39376b3b917256fdad181725a7503326'
+    Api_key = 'edba69e5628551ae272d989c93c0d12f'
+    Api_secret = 'a8214bc5e1b28bb6695aaa49f451dc38'
     Uids = 'friends@facebook.com'
     Namespace = 'facebook.com'
 
     def self.train_using_facebook(facebook_uuid, facebook_oauth_token, callback_url)
   
-      api_info = "api_key=#{Api_key}&api_secret=" #{Api_secret}"
+      api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
 
       search_info = 'uids=friends@facebook.com&namespace=facebook.com'
 
