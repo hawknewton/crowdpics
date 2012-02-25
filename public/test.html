@@ -1,0 +1,56 @@
+<html>
+    <head>
+      <title></title>
+	 <style type="text/css">
+
+	 .fb_button .fb_button_text, .fb_button_rtl .fb_button_text {
+	background: #5F78AB url(https://s-static.ak.facebook.com/rsrc.php/v1/yL/r/FGFbc80dUKj.png);
+	border-top: solid 1px #879AC0;
+	border-bottom: solid 1px #1A356E;
+	color: white;	
+	display: block;
+	font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+	font-weight: bold;
+	padding: 2px 6px 3px 6px;
+	margin: 1px 1px 0 21px;
+	text-shadow: none;
+	}
+	 </style>
+	 
+
+    </head>
+    <body>
+      <div id="fb-root"></div>
+	 
+<script src="https://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        FB.init({ 
+            appId: '307161879343818', 
+            cookie: true, 
+            xfbml: true, 
+            status: true });
+			
+		$(".fb-login-button").click(function() {
+		   FB.login(function(response) {
+				var authResponse = response.authResponse;
+				if (authResponse) {
+					$.post('/search', 
+						{  auth_token: authResponse.accessToken, facebook_uuid: authResponse.userID }, 
+						function(result){
+							console.log(result)
+						}
+					);
+			   } 
+			});
+		});
+    });
+</script>
+
+<div class="fb-login-button" data-scope="email"><a class="fb_button fb_button_medium"><span class="fb_button_text">Login with Facebook</span></a></div>
+	  	 
+
+	
+    </body>
+ </html>
