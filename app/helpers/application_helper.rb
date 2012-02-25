@@ -4,7 +4,7 @@ module ApplicationHelper
 
     require 'rest_client'
 
-    Face_api_train_url = 'http://api.face.com/face/train.json'
+    Face_api_train_url = 'http://api.face.com/faces/train.json'
     Api_key = '307161879343818'
     Api_secret = '39376b3b917256fdad181725a7503326'
     Uids = 'friends@facebook.com'
@@ -12,13 +12,15 @@ module ApplicationHelper
 
     def self.train_using_facebook(facebook_uuid, facebook_oauth_token, callback_url)
   
-      api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
+      api_info = "api_key=#{Api_key}&api_secret=" #{Api_secret}"
 
-      user_auth="fb_user:#{facebook_uuid},fb_auth_token:#{facebook_oauth_token}"
+      search_info = 'uids=friends@facebook.com&namespace=facebook.com'
 
-      get_url = "#{Face_api_train_url}?#{api_info}&#{user_auth}&callback_url=#{callback_url}"
+      user_auth="fb_user:#{facebook_uuid},fb_oauth_token:#{facebook_oauth_token}"
 
-      puts 'URL='
+      get_url = "#{Face_api_train_url}?#{api_info}&#{search_info}&user_auth=#{user_auth}&callback_url=#{callback_url}"
+
+      puts '*****URL******'
       puts get_url
 
       RestClient.get get_url

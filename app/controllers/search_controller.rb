@@ -11,16 +11,16 @@ class SearchController < ApplicationController
 
     #Save search here
 
-    train()
+    facebook_uuid = params[:facebook_uuid]
+    facebook_oauth_token = params[:auth_token]
+
+    train(facebook_uuid, facebook_oauth_token)
 
     render json: { :images => images }
 
   end
 
-  def train
-
-    facebook_uuid = params[:facebook_uuid]
-    facebook_oauth_token = params[:oauth_token]
+  def train(facebook_uuid, facebook_oauth_token)
 
     domain = current_domain
     search_id = 1
