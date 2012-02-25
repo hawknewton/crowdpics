@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'mail'
+require 'uuid'
+
+to = ARGV[0]
+from = ARGV[1]
+
+buf = STDIN.read
+
+mail = Mail.read_from_string buf
+
+image_attachments = mail.attachments.keep_if { |x| x.content_type.start_with? 'image/' }
+
+image_attachments.each do |image_attachment|
+  type = case image_attachment.content_type.gsub(/^image\/([^\s;]+).*/, '\1').downcase
+    when 'jpg', 'jpeg', 'pjpeg' #WTF is a pjpeg?
+      'jpg'
+    when 'gif'
+      'gif'
+    when 'bmp', 'bitmap'
+      'bmp'
+    when 'png'
+      'png'
+    else
+      raise "Unknown format: #{image_attachment.content_type}"
+    end
+
+  name = "#{UUID.generate.upcase}.#{type}"
+
+  begin
+    File.open(File.join(File.dirname(__FILE__), "../db/pictures/#{name}"), "w+b", 0644) do |f|
+      f.write image_attachment.body.decoded
+    end
+  rescue Exception => e
+    raise "Couldn't save image: #{e}"
+  end
+
+  puts "Wrote #{name} #{buf.length} bytes"
+end
+
+puts "#{image_attachments.length} from #{from} to #{to}"

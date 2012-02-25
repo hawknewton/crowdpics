@@ -10,6 +10,11 @@ gem 'rest-client'
 gem 'sqlite3'
 
 
+gem 'therubyracer', :platforms => :ruby
+gem 'mail'
+gem 'uuid'
+gem 'exifr'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
