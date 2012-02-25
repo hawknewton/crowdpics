@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'mail'
 require 'uuid'
+require 'exifr'
 
 to = ARGV[0]
 from = ARGV[1]
@@ -23,21 +24,52 @@ image_attachments.each do |image_attachment|
       'bmp'
     when 'png'
       'png'
+    when 'tif'
+      'tif'
     else
       raise "Unknown format: #{image_attachment.content_type}"
     end
 
+
   name = "#{UUID.generate.upcase}.#{type}"
+  path = (File.join(File.dirname(__FILE__), "../db/pictures/#{name}"))
+  image = image_attachment.body.decoded
 
   begin
-    File.open(File.join(File.dirname(__FILE__), "../db/pictures/#{name}"), "w+b", 0644) do |f|
-      f.write image_attachment.body.decoded
+    File.open(path, "w+b", 0644) do |f|
+      f.write image
     end
   rescue Exception => e
     raise "Couldn't save image: #{e}"
+  end
+
+  lat, long = nil
+
+  if ['jpg', 'tif'].include? type
+    begin
+      exif = EXIFR::JPEG.new(StringIO.new image)
+
+      lat = exif.gps_latitude.to_f
+      long = exif.gps_longitude.to_f
+
+      if exif.gps_latitude_ref == 'S'
+        lat = 0 - lat
+      end
+
+      if exif.gps_longitude_ref == 'W'
+        long = 0 - long
+      end
+
+      puts "lat:  #{lat}"
+      puts "long: #{long}"
+    rescue Exception => e
+      puts "Couldn't extract lat/long: #{e}"
+    end
   end
 
   puts "Wrote #{name} #{buf.length} bytes"
 end
 
 puts "#{image_attachments.length} from #{from} to #{to}"
+
+
