@@ -59,9 +59,6 @@ image_attachments.each do |image_attachment|
       if exif.gps_longitude_ref == 'W'
         long = 0 - long
       end
-
-      puts "lat:  #{lat}"
-      puts "long: #{long}"
     rescue Exception => e
       puts "Couldn't extract lat/long: #{e}"
     end
