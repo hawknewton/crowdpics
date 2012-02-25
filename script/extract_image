@@ -15,7 +15,7 @@ image_attachments = mail.attachments.keep_if { |x| x.content_type.start_with? 'i
 
 image_attachments.each do |image_attachment|
   type = case image_attachment.content_type.gsub(/^image\/([^\s;]+).*/, '\1').downcase
-    when 'jpg', 'jpeg'
+    when 'jpg', 'jpeg', 'pjpeg' #WTF is a pjpeg?
       'jpg'
     when 'gif'
       'gif'
