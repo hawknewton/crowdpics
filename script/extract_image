@@ -51,14 +51,14 @@ image_attachments.each do |image_attachment|
       exif = EXIFR::JPEG.new(StringIO.new image)
 
       lat = exif.gps_latitude.to_f
-      long = exif.gps_longitude.to_f
+      lon = exif.gps_longitude.to_f
 
       if exif.gps_latitude_ref == 'S'
         lat = 0 - lat
       end
 
       if exif.gps_longitude_ref == 'W'
-        long = 0 - long
+        lon = 0 - lon
       end
     rescue Exception => e
       puts "Couldn't extract lat/long: #{e}"
@@ -72,14 +72,11 @@ image_attachments.each do |image_attachment|
       name: name,
       hash: to.split('@')[0],
       lat: lat,
-      long: long,
+      lon: lon,
       date_taken: nil })
 
 
   RestClient.post('http://localhost:3000/images', json, content_type: :json)
-
-
-
 end
 
 puts "#{image_attachments.length} from #{from} to #{to}"

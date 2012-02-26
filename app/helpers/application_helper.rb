@@ -12,7 +12,7 @@ module ApplicationHelper
     Namespace = 'facebook.com'
 
     def self.train_using_facebook(facebook_uuid, facebook_oauth_token, callback_url)
-  
+
       api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
 
       search_info = 'uids=friends@facebook.com&namespace=facebook.com'
@@ -41,7 +41,6 @@ module ApplicationHelper
       RestClient.post(post_url, formatted_image_urls.to_json, :content_type => :json, :accept => :json) { |response, request, result| response }
 
     end
-
   end
 
   class Images
