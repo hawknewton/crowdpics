@@ -4,23 +4,23 @@ h3 {color:#c92459; font-weight:normal; margin-top:0;padding-top:0}
 .txt-lrg {font-size:18px}
 .main {padding:15px 15px 0}
 .right {float:right}
-.section-wrap {padding-bottom:15px;margin-bottom:5px; background: url('../img/divider_tile.png') repeat-x 0 100%}
+.section-wrap {padding-bottom:15px;margin-bottom:5px; background: url('/assets/divider_tile.png') repeat-x 0 100%}
  ul.stats-list {margin:0 0 15px; padding:0}
  ul.stats-list li {list-style-type:none; padding:15px 0 15px 85px; font-size:16px; border-top:1px solid #c5c5c5}
  ul.stats-list li:first-child {border-top:none} 
-.posted {background: url('../img/icn_me_post.png') no-repeat 5px 5px}
-.in-image {background: url('../img/icn_me_in.png') no-repeat 5px 8px}
-.friends-in {background: url('../img/icn_friends.png') no-repeat 0 10px}
-.total {padding:30px 15px; background:#fff url('../img/tri_down_bgtile.png') repeat-x 0 0}
+.posted {background: url('/assets/icn_me_post.png') no-repeat 5px 5px}
+.in-image {background: url('/assets/icn_me_in.png') no-repeat 5px 8px}
+.friends-in {background: url('/assets/icn_friends.png') no-repeat 0 10px}
+.total {padding:30px 15px; background:#fff url('/assets/tri_down_bgtile.png') repeat-x 0 0}
 .clr-hilite {color:#c92459; font-weight:bold}
 .clr-secondary {color:#888888}
 
 /*BUTTONS*/
-button.primary {background: url('../img/fb_btn_tile.png') repeat-x 0 0}
-.fb-btn-lrg {color:#fff; font-size:14px; font-weight:bold; text-decoration:none;background: url('../img/fb_btn_tile.png') repeat-x 0 0; padding:10px; display:block; text-align:center;-webkit-border-radius: 20px;-moz-border-radius:20px;border-radius:20px}
+button.primary {background: url('/assets/fb_btn_tile.png') repeat-x 0 0}
+.fb-btn-lrg {color:#fff; font-size:14px; font-weight:bold; text-decoration:none;background: url('/assets/fb_btn_tile.png') repeat-x 0 0; padding:10px; display:block; text-align:center;-webkit-border-radius: 20px;-moz-border-radius:20px;border-radius:20px}
 
 /*HEADER*/
-.hdr {background:#2d2d2d url('../img/tri_bgtile.png') repeat-x 0 100%; padding:10px 15px 20px}
+.hdr {background:#2d2d2d url('/assets/tri_bgtile.png') repeat-x 0 100%; padding:10px 15px 20px}
 
 /*GALLERY*/
 .cp-gallery {padding:10px 10px 10px}
