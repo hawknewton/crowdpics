@@ -6,6 +6,9 @@ Ruby::Application.routes.draw do
 
   match 'images/:id' => 'images#index'
 
+  match 'images' => 'images#create', via: :post
+
+
   #, via: :postl
 
   # The priority is based upon order of creation:

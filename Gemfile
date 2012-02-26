@@ -14,6 +14,7 @@ gem 'therubyracer', :platforms => :ruby
 gem 'mail'
 gem 'uuid'
 gem 'exifr'
+gem 'rest-client'
 
 # Gems used only for assets and not required
 # in production environments by default.
