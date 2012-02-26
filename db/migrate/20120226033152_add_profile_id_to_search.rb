@@ -1,5 +1,5 @@
 class AddProfileIdToSearch < ActiveRecord::Migration
   def change
-    add_column :tags, :profile_id, :integer
+    add_column :searches, :profile_id, :integer
   end
 end

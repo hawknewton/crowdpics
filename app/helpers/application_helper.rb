@@ -15,7 +15,7 @@ module ApplicationHelper
 
       api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
 
-      search_info = 'uids=friends@facebook.com&namespace=facebook.com'
+      search_info = "uids=#{facebook_uuid}@facebook.com&namespace=facebook.com"
 
       user_auth="fb_user:#{facebook_uuid},fb_oauth_token:#{facebook_oauth_token}"
 
@@ -30,7 +30,7 @@ module ApplicationHelper
 
       api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
 
-      search_info = 'uids=friends@facebook.com&namespace=facebook.com'
+      search_info = "uids=#{facebook_uuid}@facebook.com&namespace=facebook.com"
 
       user_auth="fb_user:#{facebook_uuid},fb_oauth_token:#{facebook_oauth_token}"
 
@@ -38,7 +38,15 @@ module ApplicationHelper
 
       formatted_image_urls = image_urls.join(',')
 
-      RestClient.post(post_url, formatted_image_urls.to_json, :content_type => :json, :accept => :json) { |response, request, result| response }
+      puts "Formatted Image Urls = " + formatted_image_urls
+
+      json = {urls: formatted_image_urls}
+
+      puts post_url
+
+      result = RestClient.post(post_url, json, :content_type => :json, :accept => :json) { |response, request, result| response }
+
+      puts result.inspect
 
     end
   end

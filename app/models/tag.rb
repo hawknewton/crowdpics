@@ -1,5 +1,5 @@
 class Tag < ActiveRecord::Base
-  validates :photo_id, :facebook_profile_id, presence: true
+  attr_accessible :photo, :profile
 
   belongs_to :photo
   belongs_to :profile
