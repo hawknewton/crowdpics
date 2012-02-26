@@ -14,6 +14,8 @@ Ruby::Application.routes.draw do
 
   match 'images' => 'images#create', via: :post
 
+  match '/' => 'home#facebook_login'
+
 
   #, via: :postl
 
