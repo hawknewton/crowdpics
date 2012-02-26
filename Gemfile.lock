@@ -22,6 +22,9 @@ GEM
       activesupport (= 3.2.1)
       arel (~> 3.0.0)
       tzinfo (~> 0.3.29)
+    activerecord-mysql2spatial-adapter (0.4.2)
+      mysql2 (>= 0.2.13)
+      rgeo-activerecord (~> 0.4.3)
     activeresource (3.2.1)
       activemodel (= 3.2.1)
       activesupport (= 3.2.1)
@@ -86,6 +89,11 @@ GEM
       json (~> 1.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    rgeo (0.3.4)
+    rgeo-activerecord (0.4.3)
+      activerecord (>= 3.0.3)
+      arel (>= 2.0.6)
+      rgeo (>= 0.3.4)
     sass (3.1.15)
     sass-rails (3.2.4)
       railties (~> 3.2.0)
@@ -115,6 +123,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-mysql2spatial-adapter
   coffee-rails (~> 3.2.1)
   exifr
   jquery-rails

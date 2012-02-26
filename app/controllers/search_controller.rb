@@ -115,17 +115,18 @@ class SearchController < ApplicationController
 
   def get_images(oauth_token, tag_name, date_time, longitude, latitude)
     if tag_name != nil
-      return images_by_tag
+      return images_by_tag tag_name, date_time
     end
 
     if latitude != nill and longitude != nil
-      return images_by_location
+      return images_by_location longitude, latitude, date_time
     end
 
-    return images_from_seed_data
+    return Photo.find_all
   end
 
-  @private
+  private
+
   def images_from_seed_data()
     seed_images_dir = File.join(ApplicationHelper::Images.base_images_dir, 'seeds')
 
@@ -135,11 +136,36 @@ class SearchController < ApplicationController
   end
 
   def images_by_tag(tag_name, date_time)
-    return []
+    Photos.find_by_hash_tag tag_name
   end
 
   def images_by_location(location, date_time)
-    return []
+    # Let's build us a bounding box
+    #
+
+    lat_offset = 1.0 / 69.0 * 5.0
+    log_offset = Math.cos(lat) * 5.0
+
+    bottom = lat - lat_offset
+    top = lat + lat_offset
+
+    left = log - log_offset
+    right = log + log_offset
+
+    query = "MBRContains(GeomFromText('POLYGON((? ?, ? ?, ? ?, ? ?, ? ?))'), latlon) > 0"
+    query_params = [
+      bottom,
+      left,
+      bottom,
+      right,
+      top,
+      right,
+      top,
+      left,
+      bottom,
+      left ]
+
+    Location.where(query, *query_params).map { |x| x.photos }
   end
 
   def current_domain

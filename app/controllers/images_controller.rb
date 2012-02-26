@@ -38,8 +38,14 @@ class ImagesController < ApplicationController
     photo.name = json['name']
     photo.hash_tag = json['hash']
 
-    photo.lat = json['lat'].to_f unless json['lat'].nil?
-    photo.long = json['long'].to_f unless json['long'].nil?
+    lat = json['lat']
+    lon = json['lon']
+
+    if lat && lon
+      photo.location = Location.new
+      photo.location.latlon = "POINT(#{lat} #{lon})"
+    end
+
     photo.date_taken = DateTime.parse json['date_taken'] unless json['date_taken'].nil?
 
     if photo.save
@@ -52,5 +58,4 @@ class ImagesController < ApplicationController
       render json: {status: :success}
     end
   end
-
 end
