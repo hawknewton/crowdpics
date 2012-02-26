@@ -5,6 +5,7 @@ module ApplicationHelper
     require 'rest_client'
 
     Face_api_train_url = 'http://api.face.com/faces/train.json'
+    Face_api_recognize_url = 'http://api.face.com/faces/recognize.json'
     Api_key = 'edba69e5628551ae272d989c93c0d12f'
     Api_secret = 'a8214bc5e1b28bb6695aaa49f451dc38'
     Uids = 'friends@facebook.com'
@@ -20,10 +21,23 @@ module ApplicationHelper
 
       get_url = "#{Face_api_train_url}?#{api_info}&#{search_info}&user_auth=#{user_auth}&callback_url=#{callback_url}"
 
-      puts '*****URL******'
-      puts get_url
-
       RestClient.get get_url
+    end
+
+    def self.recognize_face(facebook_uuid, facebook_oauth_token, image_urls, callback_url)
+
+      api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
+
+      search_info = 'uids=friends@facebook.com&namespace=facebook.com'
+
+      user_auth="fb_user:#{facebook_uuid},fb_oauth_token:#{facebook_oauth_token}"
+
+      post_url = "#{Face_api_recognize_url}?#{api_info}&#{search_info}&user_auth=#{user_auth}&callback_url=#{callback_url}"
+
+      formatted_image_urls = image_urls.join(',')
+
+      RestClient.post(post_url, formatted_image_urls.to_json, :content_type => :json, :accept => :json) { |response, request, result| response }
+
     end
 
   end
