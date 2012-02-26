@@ -1,21 +1,37 @@
-<html>
-  <head>
-    <title>Search, Yo!</title>
-  </head>
-  <body>
-    <form method="get" action="/search">
-      <table>
-        <tr>
-          <td>
-            Tag:
-          </td>
-          <td>
-            <input type="text" name="tag_name" size="20">
-          </td>
-        </tr>
-      </table>
-      <input type="submit">
-    </form>
-  </body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
 
+<html lang="en">
+<head>
+  <title>Find me in the crowd!</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="assets/bootstrap.css">
+  <link rel="stylesheet" href="assets/bootstrap-responsive.css">
+  <link rel="stylesheet" href="assets/common.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="assets/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+  <div class="hdr">
+    <img src="assets/crowdpicks_logo.png" width="117" height="22" alt="Crowdpicks Logo" />
+  </div>
+  <div class="main">
+    <h3 class="mbm pbs section-wrap">CHOOSE</h3>
+    <h4 class="mbm">Find me in the crowd</h4>
+    <form class="form-search mbl" action="/search" method="get">
+      <input type="text" class="input-medium search-query" name="search_term">
+      <button type="submit" class="btn">Search</button>
+    </form>
+    <h3 class="mbm pbs section-wrap">OR</h3>
+    <h4 class="mbm">Upload a photo by emailing it to &lt;event_name&gt;@croudpics.net</h4>
+    <!--
+    <form class="image-upload">
+      <div class="controls">
+        <input type="file" id="fileInput" class="input-file">
+      </div>
+    </form>
+    -->
+  </div>
+</body>
+</html>

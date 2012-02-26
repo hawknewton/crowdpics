@@ -1,6 +1,18 @@
 class SearchController < ApplicationController
 
+  def index
+    render :layout => false
+  end
+
   def photos
+    term = params[:search_term]
+
+    #do smarter stuff here
+    if term.start_with? '#'
+      tag = term.gsub(/^#/, '')
+    end
+
+
     tag = params[:tag_name]
     date_time = params[:date_time]
     latitude = params[:latitude]
@@ -8,11 +20,14 @@ class SearchController < ApplicationController
     facebook_uuid = params[:facebook_uuid]
     facebook_oauth_token = params[:auth_token]
 
-    profile = Profile.find(:facebook_profile_id => facebook_uuid)
-    if profile.empty?
-      profile = Profle.new({ :facebook_profile_id => facebook_uuid, :facebook_oauth_token => facebook_oauth_token })
-      profile.save
+    profile = Profile.find_by_facebook_profile_id(facebook_uuid)
+    if profile.nil?
+      profile = Profile.new({ :facebook_profile_id => facebook_uuid, :facebook_oauth_token => facebook_oauth_token })
+    else
+      profile.facebook_oauth_token = facebook_oauth_token
     end
+
+    profile.save
 
     search = Search.new({ :profile => profile, :state => 'training', :tag => tag, :latitude => latitude, :longitude => longitude, :date_time => date_time })
     search.save
@@ -44,11 +59,13 @@ class SearchController < ApplicationController
     search = Search.find(params[:search_id])
     profile = search.profile
 
-    puts 'Training complete for search ' + search_id
+    puts 'Training complete for search ' + search.id.to_s
 
-    images = get_images search.tag, search.date_time, search.latitude, search.longitude
+    images = get_images profile.facebook_oauth_token, search.tag, search.date_time, search.latitude, search.longitude
 
     domain = current_domain
+
+    search_id = search.id.to_s
 
     callback_url = "http://#{current_domain}/search/recognize_callback?search_id=#{search_id}"
 
@@ -63,29 +80,31 @@ class SearchController < ApplicationController
   def recognize_callback
     search = Search.find(params[:search_id])
 
-    puts 'Recognition complete for search ' + search_id
-
-    json = ActiveSupport::JSON.decode request.raw_post
+    puts 'Recognition complete for search ' + search.id.to_s
 
     profile = search.profile
 
-    json['photos'].each do |photo|
+    data = ActiveSupport::JSON.decode params[:data]
+    photos = data['photos']
 
+    photos.each do |photo|
+
+      photo_url = photo['url']
       photo_uuid = photo_url.split('images/')[1]
-      photo = Photo.find(:name => photo_uuid)
+      persisted_photo = Photo.find_by_name(photo_uuid)
 
       photo_tags = photo['tags']
       photo_tags.each do |photo_tag|
         best_guess_uid = photo_tag['uids'].first
-        best_guess_facebook_uid = best_guess_uid.split('@')[0]
+        best_guess_facebook_uid = best_guess_uid['uid'].split('@')[0]
         if best_guess_facebook_uid == profile.facebook_profile_id
-          tag = Tag.new(:photo => photo, :profile => profile)
+          tag = Tag.new(:photo => persisted_photo, :profile => profile)
           tag.save
         end
       end
     end
 
-    search.state = 'Complete'
+    search.state = 'complete'
 
     search.save
 
@@ -95,16 +114,21 @@ class SearchController < ApplicationController
   def get_completed_search
 
     search = Search.find(params[:search_id])
-    if search.state != 'completed'
+    if search.state != 'complete'
       render json: { :status => search.state }
+      return 
     end
 
     profile = search.profile
-    tags = Tag.find(:profile => profile)
+    tags = Tag.find_by_profile_id(profile.id)
     images = []
-    tags.each do |tag|
-      image_url = ApplicationHelper::Images.Images.image_web_url current_domain, tag.image.name
-      images.push image_url
+    if tags != nil
+    puts 'TAGS'
+        puts tags.id
+puts 'PHOTO'
+        puts tags.photo
+        image_url = ApplicationHelper::Images.image_web_url current_domain, tags.photo.name
+        images.push image_url
     end
 
     render json: { :status => search.state, :images => images }
@@ -112,19 +136,19 @@ class SearchController < ApplicationController
   end
 
   def get_images(oauth_token, tag_name, date_time, latitude, longitude)
+=begin
     if tag_name != nil
       images_by_tag tag_name, date_time
     elsif !latitude.nil? and !longitude.nil?
       images_by_location latitude, longitude, date_time
     else
-      # For now
-      Photo.all
-    end
+=end
+      images_from_seed_data
+   ## end
   end
 
   private
 
-=begin
   def images_from_seed_data()
     seed_images_dir = File.join(ApplicationHelper::Images.base_images_dir, 'seeds')
 
@@ -132,7 +156,6 @@ class SearchController < ApplicationController
 
     return ApplicationHelper::Images.current_images_web_paths_in_wd current_domain
   end
-=end
 
   def images_by_tag(tag_name, date_time)
     Photo.find_all_by_hash_tag tag_name
