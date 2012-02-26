@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>Search Results!</title>
+  </head>
+  <body>
+    <h1>Results</h1>
+    <% @images.each do |image| %>
+      <img src="<%= image.name %>">
+      <br>
+    <% end %>
+  </body>
+</html>
+
