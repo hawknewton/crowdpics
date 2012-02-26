@@ -1,7 +1,7 @@
 <html>
     <head>
       <title></title>
-      <style type="text/css">
+      <style type="text/css"> 
        .fb_button .fb_button_text, .fb_button_rtl .fb_button_text {
           background: #5F78AB url(https://s-static.ak.facebook.com/rsrc.php/v1/yL/r/FGFbc80dUKj.png);
           border-top: solid 1px #879AC0;
@@ -15,7 +15,7 @@
           text-shadow: none;
         }
       </style>
-
+	  <script src="foursquare.js" type="text/javascript"></script>
       <script src="https://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
       <script type="text/javascript">
@@ -46,13 +46,50 @@
           });
       </script>
 
+	  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	  <script>
+	  var geocoder;
+	  function initGeo(){
+		geocoder = new google.maps.Geocoder();
+	  }
+	  function GetGeoLocale(address) {
+		var geoLocale;
+		geocoder.geocode( { 'address': address}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+		var locationArray = results[0].geometry.location;
+			//console.log(locationArray);
+			//console.log(locationArray.Sa);
+			//console.log(locationArray.Ta);
+			$.post('/search',
+                      {
+                        longitude: locationArray.Sa, 
+                        latitude: locationArray.Ta 
+                      },
+                      function(result){
+                        console.log(result)
+                      }
+                    );
+		} else {
+		alert("Geocode was not successful for the following reason: " + status);
+		}
+		});
+		} 
+	  </script>
+	  
+	  
     </head>
-    <body>
+    <body onload="initGeo()">
       <div id="fb-root"></div>
       <div class="fb-login-button" data-scope="email">
         <a class="fb_button fb_button_medium">
           <span class="fb_button_text">Login with Facebook</span>
         </a>
       </div>
+	  
+	  Location: <input name="textbox1" id="textbox1" type="text" />
+	  <input name="buttonExecute" onclick="GetGeoLocale(document.getElementById('textbox1').value)" type="button" value="Find Location" />
+	  <br/>
+	  <input type="image" onclick="getAccessToken()" src="https://playfoursquare.s3.amazonaws.com/press/logo/connect-black.png" name="image"><br>
+	  
     </body>
  </html>
