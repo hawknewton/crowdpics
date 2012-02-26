@@ -17,13 +17,9 @@ class SearchController < ApplicationController
     search = Search.new({ :profile => profile, :state => 'training', :tag => tag, :latitude => latitude, :longitude => longitude, :date_time => date_time })
     search.save
 
-#    train(facebook_uuid, facebook_oauth_token, search.id)
+    train(facebook_uuid, facebook_oauth_token, search.id)
 
-#    render json: { :search_id => search.id }
-
-    @images = get_images(nil, tag, date_time, latitude, longitude)
-
-    puts @images.inspect
+    render json: { :search_id => search.id }
   end
 
   def train(facebook_uuid, facebook_oauth_token, search_id)
