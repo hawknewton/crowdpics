@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+require 'active_support'
 require 'mail'
 require 'uuid'
 require 'exifr'
+require 'rest_client'
 
 to = ARGV[0]
 from = ARGV[1]
@@ -29,7 +31,6 @@ image_attachments.each do |image_attachment|
     else
       raise "Unknown format: #{image_attachment.content_type}"
     end
-
 
   name = "#{UUID.generate.upcase}.#{type}"
   path = (File.join(File.dirname(__FILE__), "../db/pictures/#{name}"))
@@ -65,8 +66,20 @@ image_attachments.each do |image_attachment|
   end
 
   puts "Wrote #{name} #{buf.length} bytes"
+
+  json = ActiveSupport::JSON.encode(
+    { email: from,
+      name: name,
+      hash: to.split('@')[0],
+      lat: lat,
+      long: long,
+      date_taken: nil })
+
+
+  RestClient.post('http://localhost:3000/images', json, content_type: :json)
+
+
+
 end
 
 puts "#{image_attachments.length} from #{from} to #{to}"
-
-

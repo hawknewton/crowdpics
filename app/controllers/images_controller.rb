@@ -29,4 +29,23 @@ class ImagesController < ApplicationController
     return images_dir
   end
 
+  def create
+    json = ActiveSupport::JSON.decode request.raw_post
+
+    profile = Profile.find_or_create_by_email json['email']
+
+    photo = Photo.new
+    photo.name = json['name']
+    photo.hash_tag = json['hash']
+
+    photo.lat = json['lat'].to_f unless json['lat'].nil?
+    photo.long = json['long'].to_f unless json['long'].nil?
+    photo.date_taken = DateTime.parse json['date_taken'] unless json['date_taken'].nil?
+
+    if photo.save
+      #todo -- call to face.com happens here
+      render json: {status: :success}
+    end
+  end
+
 end
