@@ -76,8 +76,8 @@ image_attachments.each do |image_attachment|
 
   timage = ImageList.new tf.path
 
-  timage.resize_to_fit 1024
-  timage.write path
+  timage.resize_to_fit! 1024
+  timage.write(path) { self.quality = 75 }
 
   puts "Wrote #{name}"
 
@@ -90,7 +90,7 @@ image_attachments.each do |image_attachment|
       date_taken: nil })
 
 
-  RestClient.post('http://localhost:3000/images', json, content_type: :json)
+  RestClient.post('http://localhost:4000/images', json, content_type: :json)
 end
 
 puts "#{image_attachments.length} from #{from} to #{to}"
