@@ -1,6 +1,14 @@
 class SearchController < ApplicationController
 
   def photos
+    term = params[:search_term]
+
+    #do smarter stuff here
+    if term.start_with? '#'
+      tag = term.gsub(/^#/, '')
+    end
+
+
     tag = params[:tag_name]
     date_time = params[:date_time]
     latitude = params[:latitude]
