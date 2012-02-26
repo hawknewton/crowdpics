@@ -15,11 +15,16 @@
           text-shadow: none;
         }
       </style>
-	  <script src="foursquare.js" type="text/javascript"></script>
+
       <script src="https://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+	    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
       <script type="text/javascript">
           $(function () {
+              var auth_token = null;
+              var facebook_uuid = null;
+              var geocoder = new google.maps.Geocoder();
+
               FB.init({
                   appId: '307161879343818',
                   cookie: true,
@@ -27,69 +32,82 @@
                   status: true 
               });
 
-              $(".fb-login-button").click(function() {
-                 FB.login(function(response) {
+              $("#searchByLocation").click(function(){
+                var address = $("#address").val()
+                function searchOnAddress(){
+                  getGeoLocale(address, function(location){
+                    search(location.Sa, location.Ta, '');
+                  }
+                }
+
+                if(auth_token == null || facebook_uuid == null) {
+                  startFacebookOAuthProcess(searchOnAddress);
+                }else {
+                  searchOnAddress();
+                }
+              });
+
+              function startFacebookOAuthProcess(callback){
+                FB.login(function(response) {
                   var authResponse = response.authResponse;
                   if (authResponse) {
-                    $.post('/search',
-                      {
-                        auth_token: authResponse.accessToken, 
-                        facebook_uuid: authResponse.userID 
-                      },
-                      function(result){
-                        console.log(result)
-                      }
-                    );
+                    auth_token = authResponse.accessToken;
+                    facebook_uuid = authResponse.userID;
+                    callback();
                    }
-                   }, { scope: 'user_photos,friends_photos,user_photo_video_tags,friends_photo_video_tags,user_birthday,friends_birthday,offline_access,user_events,friends_events,publish_stream'});
-              });
+                 },
+                 { scope: 'user_photos,friends_photos,user_photo_video_tags,friends_photo_video_tags,user_birthday,friends_birthday,offline_access,user_events,friends_events,publish_stream'});
+
+              }
+
+              function getGeoLocale(address, callback) {
+                geocoder.geocode( { 'address': address}, function(results, status) {
+                  if (status == google.maps.GeocoderStatus.OK) {
+                    callback(results[0].geometry.location);
+                  } else {
+                    alert("Location lookup was not successful for the following reason: " + status);
+                  }
+                });
+              }
+
+              function beginPollingSearch(searchId){
+                $.get('/search/def get_completed_search?searchId=' + searchId, function(data){
+                  $("#status").text(data.status);
+                  if(data.status != 'Complete') {
+                    setTimeout(function(){ beginPollingSearch(searchId) }, 1000);
+                  } else {
+                    photos = $("#photos").html('');
+                    for(var i = 0; i < data.images.length; i++){
+                      var image = $("<img/>").attr('src', data.images[i]);
+                      var imageContainer = $("<div/>").html(image);
+                      photos.append(imageContainer);
+                    }
+                  }
+                });
+              }
+
+              function search(latitude, longitude, tag, callback){
+                $.post('/search',
+                              {
+                                longitude: longitude,
+                                latitude: latitude,
+                                auth_token: authResponse.accessToken,
+                                facebook_uuid: authResponse.userID
+                              },
+                              function(data){
+                                beginPollingSearch(data.search_id);
+                              });
+              }
           });
       </script>
 
-	  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-	  <script>
-	  var geocoder;
-	  function initGeo(){
-		geocoder = new google.maps.Geocoder();
-	  }
-	  function GetGeoLocale(address) {
-		var geoLocale;
-		geocoder.geocode( { 'address': address}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK) {
-		var locationArray = results[0].geometry.location;
-			//console.log(locationArray);
-			//console.log(locationArray.Sa);
-			//console.log(locationArray.Ta);
-			$.post('/search',
-                      {
-                        longitude: locationArray.Sa, 
-                        latitude: locationArray.Ta 
-                      },
-                      function(result){
-                        console.log(result)
-                      }
-                    );
-		} else {
-		alert("Geocode was not successful for the following reason: " + status);
-		}
-		});
-		} 
-	  </script>
-	  
-	  
     </head>
-    <body onload="initGeo()">
-      <div id="fb-root"></div>
-      <div class="fb-login-button" data-scope="email">
-        <a class="fb_button fb_button_medium">
-          <span class="fb_button_text">Login with Facebook</span>
-        </a>
+    <body>
+      <h3 id='status'></h3>
+      Location: <input name="textbox1" id="address" type="text" />
+      <input name="buttonExecute" type="button" value="Find Location" id="searchByLocation" />
+      <h4>Photos:</h4>
+      <div id='photos'>
       </div>
-	  
-	  Location: <input name="textbox1" id="textbox1" type="text" />
-	  <input name="buttonExecute" onclick="GetGeoLocale(document.getElementById('textbox1').value)" type="button" value="Find Location" />
-	  <br/>
-	  <input type="image" onclick="getAccessToken()" src="https://playfoursquare.s3.amazonaws.com/press/logo/connect-black.png" name="image"><br>
-	  
     </body>
  </html>

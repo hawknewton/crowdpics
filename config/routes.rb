@@ -4,6 +4,8 @@ Ruby::Application.routes.draw do
 
   match 'search/train_callback' => 'search#train_callback'
 
+  match 'search/recognize_callback' => 'search#recognize_callback'
+
   match 'images/:id' => 'images#index'
 
   match 'images' => 'images#create', via: :post

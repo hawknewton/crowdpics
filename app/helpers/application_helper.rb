@@ -26,7 +26,7 @@ module ApplicationHelper
       RestClient.get get_url
     end
 
-    def self.recognize_face(facebook_uuid, facebook_oauth_token, image_urls, callback_url)
+    def self.recognize_using_facebook(facebook_uuid, facebook_oauth_token, image_urls, callback_url)
 
       api_info = "api_key=#{Api_key}&api_secret=#{Api_secret}"
 
