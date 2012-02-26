@@ -6,6 +6,10 @@ require 'mail'
 require 'uuid'
 require 'exifr'
 require 'rest_client'
+require 'RMagick'
+require 'tempfile'
+
+include Magick
 
 to = ARGV[0]
 from = ARGV[1]
@@ -32,19 +36,9 @@ image_attachments.each do |image_attachment|
       raise "Unknown format: #{image_attachment.content_type}"
     end
 
-  name = "#{UUID.generate.upcase}.#{type}"
-  path = (File.join(File.dirname(__FILE__), "../db/pictures/#{name}"))
-  image = image_attachment.body.decoded
-
-  begin
-    File.open(path, "w+b", 0644) do |f|
-      f.write image
-    end
-  rescue Exception => e
-    raise "Couldn't save image: #{e}"
-  end
 
   lat, long = nil
+  image = image_attachment.body.decoded
 
   if ['jpg', 'tif'].include? type
     begin
@@ -65,7 +59,27 @@ image_attachments.each do |image_attachment|
     end
   end
 
-  puts "Wrote #{name} #{buf.length} bytes"
+  name = "#{UUID.generate.upcase}.#{type}"
+  path = (File.join(File.dirname(__FILE__), "../db/pictures/#{name}"))
+
+  #tempfiles taste like jesus
+
+  tf = Tempfile.new ['image', '.jpeg']
+
+  begin
+    File.open(tf.path, "w+b", 0644) do |f|
+      f.write image
+    end
+  rescue Exception => e
+    raise "Couldn't save image to tempfile: #{e}"
+  end
+
+  timage = ImageList.new tf.path
+
+  timage.resize_to_fit 1024
+  timage.write path
+
+  puts "Wrote #{name}"
 
   json = ActiveSupport::JSON.encode(
     { email: from,

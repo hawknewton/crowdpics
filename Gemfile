@@ -16,6 +16,7 @@ gem 'uuid'
 gem 'exifr'
 gem 'rest-client'
 gem 'activerecord-mysql2spatial-adapter'
+gem 'rmagick'
 
 # Gems used only for assets and not required
 # in production environments by default.
