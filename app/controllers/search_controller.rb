@@ -2,46 +2,56 @@ class SearchController < ApplicationController
 
   def index
 
-    oauth_token = params[:oauth_token]
-    tag_name = params[:tag_name]
+    tag = params[:tag_name]
     date_time = params[:date_time]
-    location = params[:location]
-
-    images = get_images oauth_token, tag_name, date_time, location
-
-    #Save search here
-
+    latitude = params[:latitude]
+    longitude = params[:longitude]
     facebook_uuid = params[:facebook_uuid]
     facebook_oauth_token = params[:auth_token]
 
-    train(facebook_uuid, facebook_oauth_token)
+    search = Search.new({ :facebook_uuid => facebook_uuid, :facebook_oauth_token => facebook_oauth_token, :state => 'training', :tag => tag, :latitude => latitude, :longitude => longitude, :date_time => date_time })
+    search.save
 
-    render json: { :images => images }
+    train(facebook_uuid, facebook_oauth_token, search.id)
+
+    render json: { :search_id => search.id }
 
   end
 
-  def train(facebook_uuid, facebook_oauth_token)
+  def train(facebook_uuid, facebook_oauth_token, search_id)
 
     domain = current_domain
-    search_id = 1
     callback_url = "http://#{current_domain}/search/train_callback?search_id=#{search_id}"
+
+    puts 'Trainng begun for search ' + search_id.to_s
+
     ApplicationHelper::FaceClient.train_using_facebook(facebook_uuid, facebook_oauth_token, callback_url)
 
   end
 
   def train_callback
-    search_id = params[:search_id]
-    puts 'Train Callback hit'
+    search = Search.find(params[:search_id])
+
+    images = get_images search.tag, search.date_time, search.latitude, search.date_time
+
+    puts 'Trainng complete for search ' + search_id
+
+    search.state = 'recognizing'
+    search.save
+
+    render json: { :images => images }
   end
 
-  def get_images(oauth_token, tag_name, date_time, location)
+  def get_images(oauth_token, tag_name, date_time, longitude, latitude)
     if tag_name != nil
-      images = images_by_tag
-    elsif location != nil
-      images = images_by_location
-    else
-      images = images_from_seed_data
+      return images_by_tag
     end
+
+    if latitude != nill and longitude != nil
+      return images_by_location
+    end
+    
+    return images_from_seed_data
   end
 
   @private

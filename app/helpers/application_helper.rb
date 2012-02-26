@@ -21,6 +21,8 @@ module ApplicationHelper
 
       get_url = "#{Face_api_train_url}?#{api_info}&#{search_info}&user_auth=#{user_auth}&callback_url=#{callback_url}"
 
+      puts get_url
+
       RestClient.get get_url
     end
 
