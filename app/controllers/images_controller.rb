@@ -55,12 +55,6 @@ class ImagesController < ApplicationController
     photo.date_taken = DateTime.parse json['date_taken'] unless json['date_taken'].nil?
 
     if photo.save
-      #Fake it out for now to make sure the model works
-      tag = Tag.new
-      tag.photo = photo
-      tag.facebook_profile_id = 'hnewton'
-      tag.save
-
       render json: {status: :success}
     end
   end
