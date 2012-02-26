@@ -1,6 +1,8 @@
 Ruby::Application.routes.draw do
 
-  match 'search' => 'search#photos'
+  match 'search' => 'search#index'
+
+  match 'search/photos' => 'search#photos'
 
   match 'search/train_callback' => 'search#train_callback'
 

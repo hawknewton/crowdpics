@@ -12,6 +12,12 @@ class ImagesController < ApplicationController
   end
 
   def local_image_path(id)
+    image = Photo.find_by_name(id)
+    if image.nil?
+      image = Photo.new(:name => id, :hash_tag => 'seed data')
+      image.save
+    end
+
     image_path = File.join base_images_dir, id
     if File.exists? image_path
       image_path = File.join image_path

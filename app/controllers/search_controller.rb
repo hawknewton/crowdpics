@@ -1,5 +1,9 @@
 class SearchController < ApplicationController
 
+  def index
+    render :layout => false
+  end
+
   def photos
     tag = params[:tag_name]
     date_time = params[:date_time]
@@ -11,8 +15,11 @@ class SearchController < ApplicationController
     profile = Profile.find_by_facebook_profile_id(facebook_uuid)
     if profile.nil?
       profile = Profile.new({ :facebook_profile_id => facebook_uuid, :facebook_oauth_token => facebook_oauth_token })
-      profile.save
+    else
+      profile.facebook_oauth_token = facebook_oauth_token
     end
+
+    profile.save
 
     search = Search.new({ :profile => profile, :state => 'training', :tag => tag, :latitude => latitude, :longitude => longitude, :date_time => date_time })
     search.save
@@ -105,13 +112,15 @@ class SearchController < ApplicationController
     end
 
     profile = search.profile
-    tags = Tag.find_by_facebook_profile_id(profile.facebook_profile_id)
+    tags = Tag.find_by_profile_id(profile.id)
     images = []
-    if !tags.nil?
-      tags.each do |tag|
-        image_url = ApplicationHelper::Images.Images.image_web_url current_domain, tag.image.name
+    if tags != nil
+    puts 'TAGS'
+        puts tags.id
+puts 'PHOTO'
+        puts tags.photo
+        image_url = ApplicationHelper::Images.image_web_url current_domain, tags.photo.name
         images.push image_url
-      end
     end
 
     render json: { :status => search.state, :images => images }
