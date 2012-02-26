@@ -1,7 +1,6 @@
 class SearchController < ApplicationController
 
-  def index
-
+  def photos
     tag = params[:tag_name]
     date_time = params[:date_time]
     latitude = params[:latitude]
@@ -21,7 +20,6 @@ class SearchController < ApplicationController
     train(facebook_uuid, facebook_oauth_token, search.id)
 
     render json: { :search_id => search.id }
-
   end
 
   def train(facebook_uuid, facebook_oauth_token, search_id)
@@ -48,7 +46,7 @@ class SearchController < ApplicationController
 
     puts 'Training complete for search ' + search_id
 
-    images = get_images search.tag, search.date_time, search.latitude, search.date_time
+    images = get_images search.tag, search.date_time, search.latitude, search.longitude
 
     domain = current_domain
 
@@ -113,20 +111,20 @@ class SearchController < ApplicationController
 
   end
 
-  def get_images(oauth_token, tag_name, date_time, longitude, latitude)
+  def get_images(oauth_token, tag_name, date_time, latitude, longitude)
     if tag_name != nil
-      return images_by_tag tag_name, date_time
+      images_by_tag tag_name, date_time
+    elsif !latitude.nil? and !longitude.nil?
+      images_by_location latitude, longitude, date_time
+    else
+      # For now
+      Photo.all
     end
-
-    if latitude != nill and longitude != nil
-      return images_by_location longitude, latitude, date_time
-    end
-
-    return Photo.find_all
   end
 
   private
 
+=begin
   def images_from_seed_data()
     seed_images_dir = File.join(ApplicationHelper::Images.base_images_dir, 'seeds')
 
@@ -134,14 +132,19 @@ class SearchController < ApplicationController
 
     return ApplicationHelper::Images.current_images_web_paths_in_wd current_domain
   end
+=end
 
   def images_by_tag(tag_name, date_time)
-    Photos.find_by_hash_tag tag_name
+    Photo.find_all_by_hash_tag tag_name
   end
 
-  def images_by_location(location, date_time)
+  def images_by_location(latitude, longitude, date_time)
     # Let's build us a bounding box
     #
+
+
+    lat = latitude.to_f
+    log = longitude.to_f
 
     lat_offset = 1.0 / 69.0 * 5.0
     log_offset = Math.cos(lat) * 5.0
